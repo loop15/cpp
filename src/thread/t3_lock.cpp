@@ -1,18 +1,23 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/prctl.h>//系统调用
 pthread_mutex_t mutex ;
 
 void *print_msg(void *arg)
 {
     int i = 0;
-    //  pthread_mutex_lock(&mutex);
+    char name[32];
+    pthread_t tid = pthread_self();
+    prctl(PR_SET_NAME, (unsigned long)"xx");
+    prctl(PR_GET_NAME, (unsigned long)name);
+    pthread_mutex_lock(&mutex);
     for (i = 0; i < 15; i++)
     {
-        printf("output : %d\n", i);
+        printf("thrad=%p name = %s output : %d\n", tid, name, i);
         usleep(100);
     }
-//    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
